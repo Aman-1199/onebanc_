@@ -4,6 +4,7 @@ class FoodItem {
   final String imageUrl;
   final int price;
   final double rating;
+  final String? cuisineId;
 
   FoodItem({
     required this.id,
@@ -11,6 +12,7 @@ class FoodItem {
     required this.imageUrl,
     required this.price,
     required this.rating,
+    this.cuisineId,
   });
 
   factory FoodItem.fromJson(Map<String, dynamic> json) {

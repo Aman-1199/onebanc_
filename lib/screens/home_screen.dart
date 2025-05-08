@@ -3,6 +3,7 @@ import '../models/cuisine.dart';
 import '../models/food_item.dart';
 import '../services/api_service.dart';
 import 'cuisine_screen.dart';
+import '../services/cart_service.dart';
 import 'cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Cuisine> cuisines = [];
   List<FoodItem> topDishes = [];
+  final CartService cartService = CartService();
 
   bool isLoading = true;
 
@@ -32,13 +34,29 @@ class _HomeScreenState extends State<HomeScreen> {
       final data = await ApiService.getItemList();
       setState(() {
         cuisines = data;
-        topDishes = data.expand((cuisine) => cuisine.items).take(3).toList();
+        topDishes = data.expand((cuisine) => cuisine.items.map((item) => FoodItem(
+          id: item.id,
+          name: item.name,
+          imageUrl: item.imageUrl,
+          price: item.price,
+          rating: item.rating,
+          cuisineId: cuisine.id,
+        ))).take(3).toList();
         isLoading = false;
       });
     } catch (e) {
       print("Error: $e");
       setState(() => isLoading = false);
     }
+  }
+
+  void addToCart(FoodItem item) {
+    setState(() {
+      cartService.addToCart(item, cuisineId: item.cuisineId!);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${item.name} added to cart')),
+      );
+    });
   }
 
   @override
@@ -122,7 +140,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     subtitle: Text(
                       '${lang ? 'मूल्य' : 'Price'}: ₹${dish.price} | ${lang ? 'रेटिंग' : 'Rating'}: ${dish.rating}',
                     ),
-                    trailing: const Icon(Icons.add),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () => addToCart(dish),
+                    ),
                   ),
                 );
               },
