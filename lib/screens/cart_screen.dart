@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import '../services/api_service.dart';
+import 'dart:convert'; // Ensure this is included
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -31,30 +32,52 @@ class _CartScreenState extends State<CartScreen> {
 
       List<Map<String, dynamic>> requestData = items.map((cartItem) {
         return {
-          "cuisine_id": 99999, // placeholder since we don't track this per item
+          "cuisine_id": int.tryParse(cartItem.cuisineId) ?? 0,
           "item_id": int.tryParse(cartItem.item.id) ?? 0,
           "item_price": cartItem.item.price,
           "item_quantity": cartItem.quantity,
         };
       }).toList();
 
+      final totalAmount = grandTotal.toInt();
+      final totalItems = items.fold(0, (sum, item) => sum + item.quantity);
+
+      // Ensure you're using jsonEncode properly
+      print("🧾 Sending payment payload:");
+      print(jsonEncode({
+        "total_amount": totalAmount,
+        "total_items": totalItems,
+        "data": requestData
+      }));
+
       final txnId = await ApiService.makePayment(
-        totalAmount: grandTotal.toInt(),
-        totalItems: items.fold(0, (sum, item) => sum + item.quantity),
+        totalAmount: totalAmount,
+        totalItems: totalItems,
         data: requestData,
       );
 
+      // ✅ Show success toast/snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("✅ Payment completed successfully!"),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // ✅ Show confirmation dialog
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (_) => AlertDialog(
-          title: const Text("Order Placed!"),
-          content: Text("Transaction ID: $txnId"),
+          title: const Text("Order Placed Successfully ✅"),
+          content: Text("Your transaction has been completed.\n\nTransaction ID:\n$txnId"),
           actions: [
             TextButton(
               onPressed: () {
                 cartService.clearCart();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(); // go back to home
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop(); // Go back to home screen
               },
               child: const Text("OK"),
             ),
@@ -62,8 +85,12 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } catch (e) {
+      print("❌ Payment failed: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Payment Failed: $e")),
+        SnackBar(
+          content: Text("❌ Payment Failed: $e"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -90,7 +117,8 @@ class _CartScreenState extends State<CartScreen> {
                   leading: Image.network(cartItem.item.imageUrl, width: 50),
                   title: Text(cartItem.item.name),
                   subtitle: Text(
-                      "₹${cartItem.item.price} × ${cartItem.quantity} = ₹${cartItem.item.price * cartItem.quantity}"),
+                    "₹${cartItem.item.price} × ${cartItem.quantity} = ₹${cartItem.item.price * cartItem.quantity}",
+                  ),
                 );
               }).toList(),
             ),
@@ -122,10 +150,20 @@ class _CartScreenState extends State<CartScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title,
-            style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-        Text("₹${value.toStringAsFixed(2)}",
-            style: TextStyle(fontSize: 16, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          "₹${value.toStringAsFixed(2)}",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ],
     );
   }

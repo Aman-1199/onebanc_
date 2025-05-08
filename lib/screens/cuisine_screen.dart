@@ -17,12 +17,9 @@ class _CuisineScreenState extends State<CuisineScreen> {
 
   void addToCart(FoodItem item) {
     setState(() {
-      cartService.addToCart(item);
+      cartService.addToCart(item, cuisineId: widget.cuisine.id);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${item.name} added to cart'),
-          duration: const Duration(seconds: 1),
-        ),
+        SnackBar(content: Text('${item.name} added to cart')),
       );
     });
   }
@@ -41,7 +38,7 @@ class _CuisineScreenState extends State<CuisineScreen> {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             child: ListTile(
-              leading: Image.network(dish.imageUrl, width: 60, fit: BoxFit.cover),
+              leading: Image.network(dish.imageUrl, width: 60),
               title: Text(dish.name),
               subtitle: Text('₹${dish.price} | Rating: ${dish.rating}'),
               trailing: IconButton(

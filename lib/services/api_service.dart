@@ -10,6 +10,7 @@ class ApiService {
     "Content-Type": "application/json"
   };
 
+  // ✅ API: get_item_list
   static Future<List<Cuisine>> getItemList() async {
     final url = Uri.parse('$baseUrl/emulator/interview/get_item_list');
     final headers = {
@@ -28,9 +29,12 @@ class ApiService {
       List cuisines = data['cuisines'];
       return cuisines.map((e) => Cuisine.fromJson(e)).toList();
     } else {
+      print("❌ Failed to load item list: ${response.body}");
       throw Exception('Failed to load cuisines');
     }
   }
+
+  // ✅ API: make_payment
   static Future<String> makePayment({
     required int totalAmount,
     required int totalItems,
@@ -48,11 +52,17 @@ class ApiService {
       "data": data,
     };
 
+    print("📦 Sending payment request:");
+    print(jsonEncode(body));
+
     final response = await http.post(
       url,
       headers: headers,
       body: jsonEncode(body),
     );
+
+    print("📥 Payment API response (${response.statusCode}):");
+    print(response.body);
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
@@ -61,6 +71,4 @@ class ApiService {
       throw Exception("Payment failed");
     }
   }
-
-// We'll add other APIs later: get_item_by_filter, make_payment, etc.
 }
