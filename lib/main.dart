@@ -25,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'OneBanc Restaurant',
+      debugShowCheckedModeBanner:false,
       home: HomeScreen(
         isHindi: isHindi,
         onLanguageToggle: toggleLanguage,

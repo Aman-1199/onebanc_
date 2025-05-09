@@ -28,22 +28,36 @@ class _CuisineScreenState extends State<CuisineScreen> {
   Widget build(BuildContext context) {
     final dishes = widget.cuisine.items;
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(widget.cuisine.name),
+        backgroundColor: Colors.black,
+        title: Text(widget.cuisine.name,
+          style: TextStyle(
+            fontSize: 25,
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Change the color of the back arrow
+        ),
       ),
       body: ListView.builder(
         itemCount: dishes.length,
         itemBuilder: (context, index) {
           final dish = dishes[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: ListTile(
-              leading: Image.network(dish.imageUrl, width: 60),
-              title: Text(dish.name),
-              subtitle: Text('₹${dish.price} | Rating: ${dish.rating}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                onPressed: () => addToCart(dish),
+          return SizedBox(
+            height: 80,
+            child: Card(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: ListTile(
+                leading: Image.network(dish.imageUrl, width: 60),
+                title: Text(dish.name),
+                subtitle: Text('₹${dish.price} | Rating: ${dish.rating}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  onPressed: () => addToCart(dish),
+                ),
               ),
             ),
           );
