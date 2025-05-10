@@ -200,8 +200,21 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
         },
-        child: const Icon(Icons.shopping_cart),
+        child: Container(
+        width: 90,
+        height: 90,
+        decoration: BoxDecoration(
+          color: Colors.grey, // background color of the circle
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Icon(
+          Icons.shopping_cart,
+          size: 40, // adjust icon size as needed
+          color: Colors.white, // icon color
+        ),
       ),
+
+    ),
     );
   }
 }
