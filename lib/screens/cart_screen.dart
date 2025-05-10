@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/cart_service.dart';
 import '../services/api_service.dart';
-import 'dart:convert'; // Ensure this is included
+import 'dart:convert';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -107,23 +107,47 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Your Cart")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text("Your Cart",
+      style: TextStyle(
+          fontSize: 25,
+          fontFamily: "Poppins",
+          fontWeight: FontWeight.bold,
+        color: Colors.black
+      ),),
+          iconTheme: IconThemeData(
+          color: Colors.black
+      ),
+        backgroundColor: Colors.white,
+      ),
       body: Column(
         children: [
           Expanded(
             child: ListView(
               children: cart.values.map((cartItem) {
                 return ListTile(
-                  leading: Image.network(cartItem.item.imageUrl, width: 50),
-                  title: Text(cartItem.item.name),
+                  leading: Image.network(cartItem.item.imageUrl, width: 50,fit: BoxFit.cover),
+                  title: Text(cartItem.item.name,style:
+                    TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black
+                    ),),
                   subtitle: Text(
                     "₹${cartItem.item.price} × ${cartItem.quantity} = ₹${cartItem.item.price * cartItem.quantity}",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black
+                    ),
                   ),
                 );
               }).toList(),
             ),
           ),
-          const Divider(),
+          const Divider(color: Colors.black,height: 2,),
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -136,8 +160,22 @@ class _CartScreenState extends State<CartScreen> {
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: placeOrder,
-                  child: const Text("Place Order"),
+                  child: const Text("Place Order",
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                  ),),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF1B263B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                 ),
+
+
               ],
             ),
           ),
@@ -152,16 +190,20 @@ class _CartScreenState extends State<CartScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
+            style: TextStyle(
+                fontSize: 20,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                color: Colors.black
+            ),
         ),
         Text(
           "₹${value.toStringAsFixed(2)}",
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              fontSize: 20,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.bold,
+              color: Colors.black
           ),
         ),
       ],
